@@ -1,0 +1,42 @@
+{
+  "name": "alnv/rapidmail-bundle",
+  "description": "",
+  "type": "contao-bundle",
+  "license": "LGPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "Alexander Naumov",
+      "homepage": "https://alexandernaumov.de",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Alnv\\ContaoRapidMailBundle\\": "src/"
+    },
+    "classmap": [
+      "src/Resources/contao/"
+    ],
+    "exclude-from-classmap": [
+      "src/Resources/contao/dca/",
+      "src/Resources/contao/config/",
+      "src/Resources/contao/languages/"
+    ]
+  },
+  "require": {
+    "php":">=7.1",
+    "contao/core-bundle":"~4.4",
+    "rapidmail/rapidmail-apiv3-client-php": "^1.0"
+  },
+  "config": {
+    "preferred-install": "dist"
+  },
+  "extra": {
+    "contao": {
+      "sources": {
+        "": "system/modules/contao-rapidmail-bundle"
+      }
+    },
+    "contao-manager-plugin": "Alnv\\ContaoRapidMailBundle\\ContaoManager\\Plugin"
+  }
+}
