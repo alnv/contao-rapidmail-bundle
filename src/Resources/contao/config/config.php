@@ -1,3 +1,3 @@
 <?php
 
-$GLOBALS['TL_HOOKS']['processFormData'][] = [ 'Alnv\ContaoRapidMailBundle\Hooks\Form', 'processFormData' ];
+$GLOBALS['TL_HOOKS']['processFormData'][] = ['rapidmail.hooks.form', 'processFormData'];
