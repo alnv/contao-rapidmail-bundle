@@ -2,7 +2,7 @@
 
 Mit dieser Erweiterung kannst du mit einem Contao-Formular Newsletter Empfänger für Rapidmail anlegen.
 
-**Rapidmail im Formular aktiviere**
+**Rapidmail im Formular aktivieren**
 ![](https://catalog-manager.org/files/air-theme/media/rapidmail-bundle/screenshot-1.png)
 
 **Empfängerliste auswählen**
