@@ -65,8 +65,8 @@ class Rapidmail {
 
         $arrReturn = [];
         $arrAccessData = $this->getAccessData($strFormId);
-        
-        if ($arrAccessData['user'] || $arrAccessData['password']) {
+
+        if (!$arrAccessData['user'] || !$arrAccessData['password']) {
             return $arrReturn;
         }
 
