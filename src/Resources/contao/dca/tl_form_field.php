@@ -25,7 +25,7 @@ $GLOBALS['TL_DCA']['tl_form_field']['fields']['rapidMailRecipientlistId'] = [
         'includeBlankOption' => true
     ],
     'options_callback' => function (\DataContainer $objDataContainer) {
-        return (new \Alnv\ContaoRapidMailBundle\Library\Rapidmail())->getRecipientlist($objDataContainer->activeRecord->id);
+        return (new \Alnv\ContaoRapidMailBundle\Library\Rapidmail())->getRecipientlist($objDataContainer->activeRecord->pid);
     },
     'exclude' => true,
     'sql' => "varchar(255) NOT NULL default ''"
