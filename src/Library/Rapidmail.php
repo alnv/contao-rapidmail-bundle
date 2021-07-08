@@ -65,6 +65,11 @@ class Rapidmail {
 
         $arrReturn = [];
         $arrAccessData = $this->getAccessData($strFormId);
+        
+        if ($arrAccessData['user'] || $arrAccessData['password']) {
+            return $arrReturn;
+        }
+
         $objClient = new \Rapidmail\ApiClient\Client($arrAccessData['user'], $arrAccessData['password']);
         $objListService = $objClient->recipientlists();
 
