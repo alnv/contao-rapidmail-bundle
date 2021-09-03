@@ -70,12 +70,15 @@ class Rapidmail {
             return $arrReturn;
         }
 
-        $objClient = new \Rapidmail\ApiClient\Client($arrAccessData['user'], $arrAccessData['password']);
-        $objListService = $objClient->recipientlists();
-
-        foreach ($objListService->query() as $objList) {
-            $arrData = $objList->toArray();
-            $arrReturn[$arrData['id']] = $arrData['name'] . ' (ID: '.$arrData['id'].')';
+        try {
+            $objClient = new \Rapidmail\ApiClient\Client($arrAccessData['user'], $arrAccessData['password']);
+            $objListService = $objClient->recipientlists();
+            foreach ($objListService->query() as $objList) {
+                $arrData = $objList->toArray();
+                $arrReturn[$arrData['id']] = $arrData['name'] . ' (ID: '.$arrData['id'].')';
+            }
+        } catch (\Exception $objError) {
+            \Message::addError($objError->getMessage());
         }
 
         return $arrReturn;
