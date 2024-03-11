@@ -2,4 +2,8 @@
 
 namespace Alnv\ContaoRapidMailBundle;
 
-class AlnvContaoRapidMailBundle extends \Symfony\Component\HttpKernel\Bundle\Bundle {}
+use Symfony\Component\HttpKernel\Bundle\Bundle;
+
+class AlnvContaoRapidMailBundle extends Bundle
+{
+}

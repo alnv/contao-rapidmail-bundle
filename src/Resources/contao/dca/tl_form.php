@@ -1,5 +1,8 @@
 <?php
 
+use Contao\DataContainer;
+use Alnv\ContaoRapidMailBundle\Library\Rapidmail;
+
 $GLOBALS['TL_DCA']['tl_form']['palettes']['__selector__'][] = 'useRapidmail';
 $GLOBALS['TL_DCA']['tl_form']['palettes']['default'] .= ';{rm_settings:hide},useRapidmail';
 $GLOBALS['TL_DCA']['tl_form']['subpalettes']['useRapidmail'] = 'rmUsername,rmPassword,rmSendActivationMail,rmRecipientlists';
@@ -49,8 +52,8 @@ $GLOBALS['TL_DCA']['tl_form']['fields']['rmRecipientlists'] = [
         'multiple' => true,
         'tl_class' => 'clr'
     ],
-    'options_callback' => function (\DataContainer $objDataContainer) {
-        return (new \Alnv\ContaoRapidMailBundle\Library\Rapidmail())->getRecipientlist($objDataContainer->activeRecord->id);
+    'options_callback' => function (DataContainer $objDataContainer) {
+        return (new Rapidmail())->getRecipientlist($objDataContainer->activeRecord->id);
     },
     'sql' => "blob NULL"
 ];

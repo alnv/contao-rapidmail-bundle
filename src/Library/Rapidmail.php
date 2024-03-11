@@ -2,20 +2,33 @@
 
 namespace Alnv\ContaoRapidMailBundle\Library;
 
-class Rapidmail {
+use Contao\Config;
+use Contao\CoreBundle\Monolog\ContaoContext;
+use Contao\FormModel;
+use Contao\StringUtil;
+use Contao\System;
+use Contao\Validator;
+use Contao\FormFieldModel;
+use Psr\Log\LogLevel;
+use Rapidmail\ApiClient\Client;
+use Contao\Message;
 
-    public function getAccessData($strFormId=null) {
+class Rapidmail
+{
+
+    public function getAccessData($strFormId = null): array
+    {
 
         $arrReturn = [
-            'user' => \Config::get('rmUsername') ?: \Config::get('rapidmailUsername'),
-            'password' => \Config::get('rmPassword') ?: \Config::get('rapidmailPassword')
+            'user' => Config::get('rmUsername') ?: Config::get('rapidmailUsername'),
+            'password' => Config::get('rmPassword') ?: Config::get('rapidmailPassword')
         ];
 
         if (!$strFormId) {
             return $arrReturn;
         }
 
-        $objForm = \FormModel::findByPk($strFormId);
+        $objForm = FormModel::findByPk($strFormId);
 
         if (!$objForm) {
             return $arrReturn;
@@ -31,25 +44,27 @@ class Rapidmail {
         return $arrReturn;
     }
 
-    protected function getRapidOptions($strFormId, $arrSubmit=[]) {
+    protected function getRapidOptions($strFormId, $arrSubmit = []): array
+    {
 
         $arrOptions = [
             'recipientlist_ids' => [],
             'send_activationmail' => 'no'
         ];
 
-        $objForm = \FormModel::findByPk($strFormId);
+        $objForm = FormModel::findByPk($strFormId);
         if (!$objForm) {
             return $arrOptions;
         }
 
-        $arrOptions['recipientlist_ids'] = \StringUtil::deserialize($objForm->rmRecipientlists, true);
+        $arrOptions['recipientlist_ids'] = StringUtil::deserialize($objForm->rmRecipientlists, true);
         $arrOptions['send_activationmail'] = $objForm->rmSendActivationMail ? 'yes' : 'no';
 
-        $objFormFields = \FormFieldModel::findByPid($strFormId);
+        $objFormFields = FormFieldModel::findByPid($strFormId);
         if (!$objFormFields) {
             return $arrOptions;
         }
+
         while ($objFormFields->next()) {
             if ($objFormFields->sendToRapidMail) {
                 if ($objFormFields->rapidMailRecipientlistId && $arrSubmit[$objFormFields->name] && !in_array($objFormFields->rapidMailRecipientlistId, $arrOptions['recipientlist_ids'])) {
@@ -61,7 +76,8 @@ class Rapidmail {
         return $arrOptions;
     }
 
-    public function getRecipientlist($strFormId=null) {
+    public function getRecipientlist($strFormId = null): array
+    {
 
         $arrReturn = [];
         $arrAccessData = $this->getAccessData($strFormId);
@@ -71,20 +87,21 @@ class Rapidmail {
         }
 
         try {
-            $objClient = new \Rapidmail\ApiClient\Client($arrAccessData['user'], $arrAccessData['password']);
+            $objClient = new Client($arrAccessData['user'], $arrAccessData['password']);
             $objListService = $objClient->recipientlists();
             foreach ($objListService->query() as $objList) {
                 $arrData = $objList->toArray();
-                $arrReturn[$arrData['id']] = $arrData['name'] . ' (ID: '.$arrData['id'].')';
+                $arrReturn[$arrData['id']] = $arrData['name'] . ' (ID: ' . $arrData['id'] . ')';
             }
         } catch (\Exception $objError) {
-            \Message::addError($objError->getMessage());
+            Message::addError($objError->getMessage());
         }
 
         return $arrReturn;
     }
 
-    public function getDefaultAttributesBySubmitData($arrSubmit) {
+    public function getDefaultAttributesBySubmitData($arrSubmit): array
+    {
 
         $arrReturn = [];
 
@@ -92,11 +109,11 @@ class Rapidmail {
             return $arrReturn;
         }
 
-        $arrAttributes = ['firstname','lastname','gender','email', 'zip', 'title'];
+        $arrAttributes = ['firstname', 'lastname', 'gender', 'email', 'zip', 'title'];
 
         foreach ($arrSubmit as $strField => $varValue) {
 
-            if (\Validator::isEmail($varValue)) {
+            if (Validator::isEmail($varValue)) {
                 $arrReturn['email'] = $varValue;
             }
 
@@ -108,7 +125,8 @@ class Rapidmail {
         return $arrReturn;
     }
 
-    public function createRecipient($strFormId, $arrSubmit) {
+    public function createRecipient($strFormId, $arrSubmit): void
+    {
 
         $arrAccessData = $this->getAccessData($strFormId);
         $arrOptions = $this->getRapidOptions($strFormId, $arrSubmit);
@@ -117,7 +135,7 @@ class Rapidmail {
         foreach ($arrOptions['recipientlist_ids'] as $strRecipientListId) {
             $arrAttributes['recipientlist_id'] = $strRecipientListId;
             try {
-                $objClient = new \Rapidmail\ApiClient\Client($arrAccessData['user'], $arrAccessData['password']);
+                $objClient = new Client($arrAccessData['user'], $arrAccessData['password']);
                 $objRecipientsService = $objClient->recipients();
                 $objRecipientsService->create($arrAttributes,
                     [
@@ -125,7 +143,9 @@ class Rapidmail {
                     ]
                 );
             } catch (\Exception $objError) {
-                \System::log($objError->getMessage(), __METHOD__, TL_ERROR);
+                System::getContainer()
+                    ->get('monolog.logger.contao')
+                    ->log(LogLevel::ERROR, $objError->getMessage(), ['contao' => new ContaoContext(__CLASS__ . '::' . __FUNCTION__)]);
             }
         }
     }

@@ -2,14 +2,18 @@
 
 namespace Alnv\ContaoRapidMailBundle\Hooks;
 
-class Form {
+use Alnv\ContaoRapidMailBundle\Library\Rapidmail;
 
-    public function processFormData($arrPost, $arrForm) {
+class Form
+{
+
+    public function processFormData($arrPost, $arrForm)
+    {
 
         if (!$arrForm['useRapidmail']) {
             return null;
         }
 
-        (new \Alnv\ContaoRapidMailBundle\Library\Rapidmail())->createRecipient($arrForm['id'], $arrPost);
+        (new Rapidmail())->createRecipient($arrForm['id'], $arrPost);
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+use Contao\DataContainer;
+use Alnv\ContaoRapidMailBundle\Library\Rapidmail;
+
+
 $GLOBALS['TL_DCA']['tl_form_field']['palettes']['__selector__'][] = 'sendToRapidMail';
 $GLOBALS['TL_DCA']['tl_form_field']['subpalettes']['sendToRapidMail'] = 'rapidMailRecipientlistId';
 
@@ -24,8 +28,8 @@ $GLOBALS['TL_DCA']['tl_form_field']['fields']['rapidMailRecipientlistId'] = [
         'multiple' => false,
         'includeBlankOption' => true
     ],
-    'options_callback' => function (\DataContainer $objDataContainer) {
-        return (new \Alnv\ContaoRapidMailBundle\Library\Rapidmail())->getRecipientlist($objDataContainer->activeRecord->pid);
+    'options_callback' => function (DataContainer $objDataContainer) {
+        return (new Rapidmail())->getRecipientlist($objDataContainer->activeRecord->pid);
     },
     'exclude' => true,
     'sql' => "varchar(255) NOT NULL default ''"
