@@ -109,7 +109,7 @@ class Rapidmail
             return $arrReturn;
         }
 
-        $arrAttributes = ['firstname', 'lastname', 'gender', 'email', 'zip', 'title'];
+        $arrAttributes = ['firstname', 'lastname', 'gender', 'email', 'zip', 'title', 'status'];
 
         foreach ($arrSubmit as $strField => $varValue) {
 
